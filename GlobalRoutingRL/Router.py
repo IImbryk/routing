@@ -20,7 +20,8 @@ from mpl_toolkits.mplot3d import Axes3D
 import random
 
 np.random.seed(10701)
-tf.set_random_seed(10701)
+#tf.set_random_seed(10701)
+tf.random.set_seed(10701)
 random.seed(10701)
 
 def DRL_implementation(filename,globali):
@@ -265,12 +266,16 @@ def DRL_implementation(filename,globali):
         graphcase.net_pair = twoPinNumEachNet
 
         # Setting the session to allow growth, so it doesn't allocate all GPU memory.
-        gpu_ops = tf.GPUOptions(allow_growth=True)
-        config = tf.ConfigProto(gpu_options=gpu_ops)
-        sess = tf.Session(config=config)
+        #gpu_ops = tf.GPUOptions(allow_growth=True)
+        gpu_ops = tf.compat.v1.GPUOptions(per_process_gpu_memory_fraction=0.333)
+        #config = tf.ConfigProto(gpu_options=gpu_ops)
+        config = tf.compat.v1.ConfigProto(gpu_options=gpu_ops)
+        #sess = tf.Session(config=config)
+        sess = tf.compat.v1.Session(config=config)
 
         # Setting this as the default tensorflow session.
-        keras.backend.tensorflow_backend.set_session(sess)
+        #keras.backend.tensorflow_backend.set_session(sess)
+        keras.backend.set_session(sess)
 
         # You want to create an instance of the DQN_Agent class here, and then train / test it.
         model_path = '../model/'

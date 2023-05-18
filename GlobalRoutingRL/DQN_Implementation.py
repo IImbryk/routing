@@ -1,12 +1,15 @@
 
 #!/usr/bin/env python
-import keras, tensorflow as tf, numpy as np, sys, copy, argparse, random
+import tensorflow.compat.v1 as tf
+import tensorflow
+import keras, numpy as np, sys, copy, argparse, random
 import matplotlib.pyplot as plt
 import math
 import os
 
 np.random.seed(10701)
-tf.set_random_seed(10701)
+#tf.set_random_seed(10701)
+tensorflow.random.set_seed(10701)
 random.seed(10701)
 
 class QNetwork():
@@ -26,6 +29,8 @@ class QNetwork():
 
 		kernel_init = tf.random_uniform_initializer(-0.5, 0.5)
 		bias_init = tf.constant_initializer(0)
+		#self.input = tf.placeholder(tf.float32, shape=[None, self.nObservation], name='input')
+		tf.disable_v2_behavior()
 		self.input = tf.placeholder(tf.float32, shape=[None, self.nObservation], name='input')
 		with tf.variable_scope(networkname):
 			layer1 = tf.layers.dense(self.input, self.architecture[0], tf.nn.relu, kernel_initializer=kernel_init, bias_initializer=bias_init, name='layer1', trainable=trianable)
@@ -33,7 +38,9 @@ class QNetwork():
 			layer3 = tf.layers.dense(layer2, self.architecture[2], tf.nn.relu, kernel_initializer=kernel_init, bias_initializer=bias_init, name='layer3', trainable=trianable)
 			self.output = tf.layers.dense(layer3, self.nAction, kernel_initializer=kernel_init, bias_initializer=bias_init, name='output', trainable=trianable)
 
-		self.targetQ = tf.placeholder(tf.float32, shape=[None, self.nAction], name='target')
+		#self.targetQ = tf.placeholder(tf.float32, shape=[None, self.nAction], name='target')
+		tf.disable_v2_behavior()
+		self.targetQ = tf.placeholder(tf.float32, shape=[None, self.nAction], name='input')
 		if trianable == True:
 			self.loss = tf.losses.mean_squared_error(self.targetQ, self.output)
 			self.opt = tf.train.AdamOptimizer(learning_rate=self.learning_rate).minimize(self.loss)
